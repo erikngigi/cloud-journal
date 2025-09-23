@@ -1,3 +1,7 @@
 [submodule "themes/stack"]
 	path = themes/stack
 	url = https://github.com/erikngigi/hugo-theme-stack.git
+[submodule "themes/stack-dev"]
+	path = themes/stack-dev
+	url = https://github.com/erikngigi/hugo-theme-stack.git
+	branch = dev
