@@ -1,46 +1,28 @@
-name: Deploy Hugo Site to S3
+name: Build Hugo site
 on:
   push:
     branches:
       - dev
-  pull_request:
-    branches:
-      - dev
-  workflow_dispatch:
 permissions:
   id-token: write
   contents: read
-env:
-  HUGO_VERSION: 0.150.0
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          fetch-depth: 0
       - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v2
+        uses: peaceiris/actions-hugo@v4
         with:
-          hugo-version: ${{ env.HUGO_VERSION }}
-          extended: true
-      - name: Build Hugo site
-        run: hugo --minify
-      - name: Configure AWS credentials
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+          hugo-version: "0.150.0"
+      - name: Build minified pages
+        run: hugo --gc --minify
+      - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ secrets.AWS_REGION }}
-      - name: Sync files to S3
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+          aws-region: us-east-1
+          role-to-assume: ${{ secrets.IAM_ROLE_ARN }}
+      - name: Sync public directory with S3 bucket
         run: |
-          aws s3 sync public/ s3://${{ secrets.S3_BUCKET }}/ --delete
-      - name: Build Summary
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        run: |
-          echo "### Deployment Successful! :rocket:" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**S3 Bucket:** ${{ secrets.S3_BUCKET }}" >> $GITHUB_STEP_SUMMARY
+          aws s3 sync ./public s3://${{ secrets.S3_BUCKET }} --delete
