@@ -23,6 +23,9 @@ jobs:
         with:
           aws-region: ${{ secrets.AWS_REGION }}
           role-to-assume: ${{ secrets.IAM_ROLE_ARN }}
+      - name: Debug AWS credentials
+        run: |
+          aws sts get-caller-identity
       - name: Sync public directory with S3 bucket
         run: |
           aws s3 sync ./public s3://${{ secrets.S3_BUCKET }} --delete
