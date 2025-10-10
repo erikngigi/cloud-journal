@@ -12,20 +12,58 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
         with:
           hugo-version: "0.150.0"
+          extended: true
       - name: Build minified pages
         run: hugo --gc --minify
+      - name: Debug - List public directory contents
+        run: |
+          echo "=== Contents of public/ directory ==="
+          ls -laR public/
+          echo ""
+          echo "=== HTML files found ==="
+          find public/ -name "*.html" -type f
+          echo ""
+          echo "=== Total file count ==="
+          find public/ -type f | wc -l
       - name: Configure AWS Credentials
+        if: github.event_name != 'pull_request'
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: ${{ secrets.AWS_REGION }}
           role-to-assume: ${{ secrets.IAM_ROLE_ARN }}
       - name: Debug AWS credentials
+        if: github.event_name != 'pull_request'
         run: |
           aws sts get-caller-identity
       - name: Sync public directory with S3 bucket
         run: |
           aws s3 sync ./public s3://${{ secrets.S3_BUCKET }} --delete
+      - name: Invalidate CloudFront cache
+        if: github.event_name != 'pull_request'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+        continue-on-error: true
+      - name: Create CloudFront invalidation
+        if: github.event_name != 'pull_request'
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/*"
+        continue-on-error: true
+      - name: Build Summary
+        if: github.event_name != 'pull_request'
+        run: |
+          echo "### Deployment Successful! :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**CloudFront URL:** https://${{ secrets.CLOUDFRONT_URL }}" >> $GITHUB_STEP_SUMMARY
+          echo "**S3 Bucket:** ${{ secrets.S3_BUCKET }}" >> $GITHUB_STEP_SUMMARY
+          echo "**CloudFront Distribution:** ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}" >> $GITHUB_STEP_SUMMARY
