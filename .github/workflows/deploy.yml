@@ -63,7 +63,3 @@ jobs:
         if: github.event_name != 'pull_request'
         run: |
           echo "### Deployment Successful! :rocket:" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**CloudFront URL:** https://${{ secrets.CLOUDFRONT_URL }}" >> $GITHUB_STEP_SUMMARY
-          echo "**S3 Bucket:** ${{ secrets.S3_BUCKET }}" >> $GITHUB_STEP_SUMMARY
-          echo "**CloudFront Distribution:** ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}" >> $GITHUB_STEP_SUMMARY
