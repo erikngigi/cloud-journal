@@ -2,10 +2,3 @@
 	path = themes/stack
 	url = https://github.com/erikngigi/hugo-theme-stack.git
 	branch = dev
-[submodule "themes/stack-dev"]
-	path = themes/stack-dev
-	url = https://github.com/erikngigi/hugo-theme-stack.git
-	branch = dev
-[submodule "themes/hugo-shortcode-gallery"]
-	path = themes/hugo-shortcode-gallery
-	url = https://github.com/erikngigi/hugo-shortcode-gallery.git

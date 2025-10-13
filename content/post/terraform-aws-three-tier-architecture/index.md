@@ -104,7 +104,7 @@ The following diagram illustrates the **Three-Tier AWS Architecture** implemente
 
 ### **2.1 Diagram**
 
-![AWS Three Tier Architecture](terraform-aws-three-tier-architecture.svg)
+![AWS Three Tier Architecture](terraform-aws-three-tier-architecture.png)
 
 ---
 

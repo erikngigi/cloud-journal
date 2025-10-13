@@ -1,6 +1,6 @@
 baseurl: https://blog.ericngigi.com/
 languageCode: en-us
-theme: ["stack", "hugo-shortcode-gallery"]
+theme: stack
 title: Eric Ngigi
 copyright: Eric Ngigi
 # Theme i18n support
@@ -22,8 +22,8 @@ services:
   disqus:
     shortname: "hugo-theme-stack"
   # GA Tracking ID
-  googleAnalytics:
-    id:
+  # googleAnalytics:
+  #   id:
 pagination:
   pagerSize: 5
 permalinks:
@@ -51,8 +51,8 @@ params:
       src: img/profile-picture.png
   article:
     math: false
-    toc: true
-    readingTime: true
+    toc: false
+    readingTime: false
     license:
       enabled: false
       default: Licensed under CC BY-NC-SA 4.0
