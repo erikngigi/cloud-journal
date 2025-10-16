@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - dev
+  workflow_run:
 permissions:
   id-token: write
   contents: read
