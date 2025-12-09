@@ -45,7 +45,7 @@ jobs:
           aws sts get-caller-identity
       - name: Sync public directory with S3 bucket
         run: |
-          aws s3 sync ./public s3://${{ secrets.S3_BUCKET }} --delete
+          aws s3 sync ./public s3://${{ secrets.HUGO_DEV_S3_BUCKET }} --delete
       - name: Invalidate CloudFront cache
         if: github.event_name != 'pull_request'
         uses: aws-actions/configure-aws-credentials@v4
