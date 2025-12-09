@@ -21,9 +21,9 @@ services:
   # Change it to your Disqus shortname before using
   disqus:
     shortname: "hugo-theme-stack"
-  # GA Tracking ID
-  # googleAnalytics:
-  #   id:
+    # GA Tracking ID
+    # googleAnalytics:
+    #   id:
 pagination:
   pagerSize: 5
 permalinks:
@@ -187,7 +187,7 @@ menu:
         icon: brand-youtube
     - identifier: linkedin
       name: Linkedin
-      url: https://www.linkedin.com/in/eric-ngigi-073b72153
+      url: https://www.linkedin.com/in/ericngigi
       params:
         icon: brand-linkedin
 related:
