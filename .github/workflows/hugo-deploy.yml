@@ -2,7 +2,7 @@ name: Build Hugo site
 on:
   push:
     branches:
-      - dev
+      - prod
   workflow_dispatch:
 permissions:
   id-token: write
@@ -19,7 +19,7 @@ jobs:
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
         with:
-          hugo-version: "0.150.0"
+          hugo-version: "0.152.0"
           extended: true
       - name: Build minified pages
         run: hugo --gc --minify
@@ -45,7 +45,7 @@ jobs:
           aws sts get-caller-identity
       - name: Sync public directory with S3 bucket
         run: |
-          aws s3 sync ./public s3://${{ secrets.S3_BUCKET }} --delete
+          aws s3 sync ./public s3://${{ secrets.HUGO_PROD_S3_BUCKET }} --delete
       - name: Invalidate CloudFront cache
         if: github.event_name != 'pull_request'
         uses: aws-actions/configure-aws-credentials@v4
@@ -57,7 +57,7 @@ jobs:
         if: github.event_name != 'pull_request'
         run: |
           aws cloudfront create-invalidation \
-            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --distribution-id ${{ secrets.HUGO_PROD_CLOUDFRONT_ID }} \
             --paths "/*"
         continue-on-error: true
       - name: Build Summary
