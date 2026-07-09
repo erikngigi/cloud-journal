@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      id-token: write
       packages: write
     steps:
       - name: Checkout code
@@ -34,33 +35,22 @@ jobs:
           echo "=== Total file count ==="
           find public/ -type f | wc -l
       - name: Configure AWS Credentials
-        if: github.event_name != 'pull_request'
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: ${{ secrets.AWS_REGION }}
           role-to-assume: ${{ secrets.IAM_ROLE_ARN }}
+          role-session-name: GithubActions-HugoDevDeploy
       - name: Debug AWS credentials
-        if: github.event_name != 'pull_request'
-        run: |
-          aws sts get-caller-identity
+        run: aws sts get-caller-identity
       - name: Sync public directory with S3 bucket
         run: |
           aws s3 sync ./public s3://${{ secrets.HUGO_DEV_S3_BUCKET }} --delete
-      - name: Invalidate CloudFront cache
-        if: github.event_name != 'pull_request'
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.IAM_ROLE_ARN }}
-          aws-region: ${{ secrets.AWS_REGION }}
-        continue-on-error: true
       - name: Create CloudFront invalidation
-        if: github.event_name != 'pull_request'
         run: |
           aws cloudfront create-invalidation \
             --distribution-id ${{ secrets.HUGO_DEV_CLOUDFRONT_ID }} \
             --paths "/*"
         continue-on-error: true
       - name: Build Summary
-        if: github.event_name != 'pull_request'
         run: |
           echo "### Deployment Successful! :rocket:" >> $GITHUB_STEP_SUMMARY
