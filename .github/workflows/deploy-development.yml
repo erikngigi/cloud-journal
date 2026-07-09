@@ -1,25 +1,26 @@
-name: Build Hugo site
+name: Build and deploy the development cloud journal webiste using Hugo
 on:
   push:
     branches:
       - dev
+      - development
   workflow_dispatch:
-permissions:
-  id-token: write
-  contents: read
 jobs:
-  build:
+  build-development-webiste:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           submodules: recursive
           fetch-depth: 0
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v2
+      - name: Setup required Hugo version
+        uses: peaceiris/actions-hugo@v3
         with:
-          hugo-version: "0.152.0"
+          hugo-version: ${{ vars.HUGO_VERSION }}
           extended: true
       - name: Build minified pages
         run: hugo --gc --minify
