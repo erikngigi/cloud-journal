@@ -41,10 +41,10 @@ At the heart of the setup is the **`main.tf`** file, which serves as the orchest
 
 Each module encapsulates a specific function:
 
-* **Storage Module:** Handles S3 bucket creation and access configuration for static site hosting.
-* **Network Module:** Sets up CloudFront for content delivery and configures SSL certificates via AWS ACM.
-* **Security Module:** Manages IAM roles, policies, and OIDC trust relationships for secure GitHub Actions deployments.
-* **Cloudflare Module:** Connects Cloudflare DNS records to the CloudFront distribution and manages domain SSL validation.
+- **Storage Module:** Handles S3 bucket creation and access configuration for static site hosting.
+- **Network Module:** Sets up CloudFront for content delivery and configures SSL certificates via AWS ACM.
+- **Security Module:** Manages IAM roles, policies, and OIDC trust relationships for secure GitHub Actions deployments.
+- **Cloudflare Module:** Connects Cloudflare DNS records to the CloudFront distribution and manages domain SSL validation.
 
 This modular approach keeps the Terraform configuration clean, easier to maintain, and ideal for CI/CD workflows where each component can evolve independently. In the next sections, we’ll explore each module in detail and examine how they integrate to form a fully automated deployment pipeline for a Hugo website.
 
@@ -60,7 +60,7 @@ We start by defining an **OpenID Connect (OIDC) provider** in AWS that recognize
 
 **variables.tf (security module):**
 
-``````hcl
+```hcl
 variable "github_org" {
   description = "GitHub organization or username"
   type        = string
@@ -86,7 +86,7 @@ variable "git_oidc_thumbprint_list" {
   description = "List of thumbprints for the GitHub OIDC provider"
   type        = list(string)
 }
-``````
+```
 
 **main.tf (security module):**
 
@@ -156,7 +156,7 @@ With the security layer in place, we define an S3 bucket to host the static site
 
 **variables.tf (storage module):**
 
-``````hcl
+```hcl
 variable "project_name" {
   description = "Project name used for resource tagging"
   type        = string
@@ -166,7 +166,7 @@ variable "cloudfront_distribution_arn" {
   description = "Cloudfront Distribution ARN from the network module"
   type        = string
 }
-``````
+```
 
 **main.tf (storage module):**
 
@@ -182,9 +182,9 @@ resource "aws_s3_bucket" "hugo_site" {
 
 Additional configurations are added to enhance **security and compliance**:
 
-* Block public access
-* Enable server-side encryption
-* Restrict CloudFront access
+- Block public access
+- Enable server-side encryption
+- Restrict CloudFront access
 
 **main.tf (storage module):**
 
@@ -293,15 +293,15 @@ This IAM policy ensures that the GitHub workflow can safely interact with the S3
 
 With the Terraform configuration applied, AWS now has:
 
-* A registered **OIDC provider** for GitHub
-* An **IAM role** that can be assumed by your repository’s workflow
-* A **secure S3 bucket** for static file hosting
+- A registered **OIDC provider** for GitHub
+- An **IAM role** that can be assumed by your repository’s workflow
+- A **secure S3 bucket** for static file hosting
 
 From the Terraform outputs, we’ll use the following values in GitHub Actions secrets:
 
-* `IAM_ROLE_ARN` → Output from `github_action_role_arn`
-* `S3_BUCKET` → Output from `s3_bucket_name`
-* `AWS_REGION` → Defined in Terraform or AWS provider
+- `IAM_ROLE_ARN` → Output from `github_action_role_arn`
+- `S3_BUCKET` → Output from `s3_bucket_name`
+- `AWS_REGION` → Defined in Terraform or AWS provider
 
 These secrets will allow GitHub Actions to assume the IAM role via OIDC and deploy directly to the bucket.
 
@@ -338,7 +338,7 @@ jobs:
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
         with:
-          hugo-version: "0.150.0"
+          hugo-version: '0.150.0'
           extended: true
       - name: Build minified pages
         run: hugo --gc --minify
@@ -417,7 +417,7 @@ This step retrieves the source code from the repository, including any submodule
 - name: Setup Hugo
   uses: peaceiris/actions-hugo@v2
   with:
-    hugo-version: "0.150.0"
+    hugo-version: '0.150.0'
     extended: true
 ```
 
@@ -490,9 +490,9 @@ Invalidates the CloudFront cache so users immediately see updated content after 
 
 This workflow forms the **foundation** of the CI/CD pipeline. It ensures that:
 
-* Hugo site builds can be automated and verified directly in GitHub.
-* Secure OIDC-based authentication with AWS is already in place.
-* The deployment process (S3 upload + CloudFront invalidation) is tested and working before Terraform provisions or manages any infrastructure.
+- Hugo site builds can be automated and verified directly in GitHub.
+- Secure OIDC-based authentication with AWS is already in place.
+- The deployment process (S3 upload + CloudFront invalidation) is tested and working before Terraform provisions or manages any infrastructure.
 
 ## **5. Setting Up the Network Module: CloudFront Distribution and SSL Certificate**
 
@@ -506,7 +506,7 @@ The first resource in this module is the **Origin Access Control (OAC)**, which 
 
 **variables.tf (network module):**
 
-``````hcl
+```hcl
 variable "s3_bucket_name" {
   description = "Name of the s3 hugo bucket"
   type        = string
@@ -526,7 +526,7 @@ variable "subdomain_name" {
   description = "Subdomain name"
   type        = string
 }
-``````
+```
 
 **main.tf (network module):**
 
@@ -556,14 +556,14 @@ resource "aws_cloudfront_function" "url_rewrite" {
 function handler(event) {
     var request = event.request;
     var uri = request.uri;
-    
+
     if (uri.endsWith('/')) {
         request.uri += 'index.html';
-    } 
+    }
     else if (!uri.includes('.')) {
         request.uri += '/index.html';
     }
-    
+
     return request;
 }
 EOT
@@ -733,7 +733,7 @@ Before adding any DNS records, Terraform must retrieve details about your Cloudf
 
 **variables.tf (cloduflare module):**
 
-``````hcl
+```hcl
 variable "domain_name" {
   description = "Domain name to use in filter options"
   type        = string
@@ -757,11 +757,11 @@ variable "acm_validation_options" {
     value = string
   }))
 }
-``````
+```
 
 **provider.tf (cloudflare module):**
 
-``````hcl
+```hcl
 terraform {
   required_providers {
     cloudflare = {
@@ -769,7 +769,7 @@ terraform {
     }
   }
 }
-``````
+```
 
 **main.tf (cloudflare module):**
 
@@ -840,16 +840,18 @@ resource "cloudflare_dns_record" "hugo_site" {
 
 Here’s what’s happening:
 
-* **`type = "CNAME"`**: Points your subdomain to the CloudFront distribution.
-* **`proxied = true`**: Routes traffic through Cloudflare, enabling SSL, caching, and security features.
-* **`depends_on`** ensures the DNS validation records are created first, allowing ACM verification to complete before exposing the public domain.
+- **`type = "CNAME"`**: Points your subdomain to the CloudFront distribution.
+- **`proxied = true`**: Routes traffic through Cloudflare, enabling SSL, caching, and security features.
+- **`depends_on`** ensures the DNS validation records are created first, allowing ACM verification to complete before exposing the public domain.
 
 ## **7. Completing the CI/CD Pipeline**
 
 At this point, your **Hugo static website** is:
 
-* Built automatically via **GitHub Actions** and deployed to **Amazon S3**.
-* Distributed globally through **AWS CloudFront** with an ACM-managed SSL certificate.
-* Connected to a **custom subdomain** via **Cloudflare**, ensuring secure and performant access.
+- Built automatically via **GitHub Actions** and deployed to **Amazon S3**.
+- Distributed globally through **AWS CloudFront** with an ACM-managed SSL certificate.
+- Connected to a **custom subdomain** via **Cloudflare**, ensuring secure and performant access.
 
 This final step completes the end-to-end automation of your CI/CD pipeline—combining Terraform’s Infrastructure as Code, GitHub Actions’ automation, and the scalability of AWS and Cloudflare.
+
+![image 1](terraform-aws-ci-cd-0.png) ![image 2](terraform-aws-hugo-ci-cd-cloudfront-distribution.png) ![image 3](terraform-aws-hugo-cicd-level-2.png) ![image 4](terraform-aws-hugo-ci-cd-s3-bucket.png)

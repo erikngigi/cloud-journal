@@ -1,0 +1,71 @@
+[[social]]
+identifier = "github"
+name = "GitHub"
+url = "https://github.com/erikngigi"
+
+[social.params]
+icon = "brand-github"
+
+[[social]]
+identifier = "linkedin"
+name = "Linkedin"
+url = "https://linkedin.com/in/erikngigi"
+
+[social.params]
+icon = "brand-linkedin"
+
+[[social]]
+identifier = "youtube"
+name = "YouTube"
+url = "https://youtube.com/@erikngigi"
+
+[social.params]
+icon = "brand-youtube"
+
+[[social]]
+identifier = "upwork"
+name = "Upwork"
+url = "https://youtube.com/@erikngigi"
+
+[social.params]
+icon = "brand-upwork"
+
+[[main]]
+identifier = "home"
+name = "Home"
+url = "/"
+weight = 1
+
+[main.params]
+icon = "home-cog"
+newTab = false
+
+# [[main]]
+# identifier =
+# name = 
+# url = 
+# weight =
+#
+# [[main.params]]
+# icon = 
+# newTab =
+
+[[main]]
+identifier = "resume"
+name = "Resume"
+url = "/resume/"
+weight = 3
+
+[[main.params]]
+icon = "file-cv"
+newTab = true
+
+[[main]]
+identifier = "about"
+name = "About"
+url = "/about/"
+weight = 5
+
+[[main.params]]
+icon = "info-hexagon"
+newTab = false

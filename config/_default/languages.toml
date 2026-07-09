@@ -1,0 +1,7 @@
+[en]
+label = "English"
+title = "Eric Ngigi"
+weight = 1
+
+[en.params.sidebar]
+subtitle = "Hi, I'm Eric, a Software Engineer focused on Cloud and Linux DevSecOps. I specialize in building secure, automated infrastructure and system designs."
