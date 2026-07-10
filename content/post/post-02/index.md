@@ -1,20 +1,19 @@
-+++
-author = "Eric Ngigi"
-title = "Terraform AWS Three Tier Architecture"
-date = "2025-10-10"
-description = "A Terraform AWS Three Tier Architecture Automation"
-tags = [
-    "Terraform",
-    "IaC",
-]
-categories = [
-    "terraform",
-    "shell scripting",
-]
-series = ["Terraform Guide"]
-aliases = ["terraform-guide-01"]
-image = "terraform-banner-01.png"
-+++
+---
+title: 'Terraform AWS Three Tier Architecture'
+description: 'A Terraform AWS Three Tier Architecture Automation'
+date: '2025-10-10'
+image: 'terraform-aws-03.webp'
+draft: false
+
+categories:
+  - 'Infrastructure as Code (IaC)'
+
+toc: true
+math: false
+license: ''
+hidden: false
+comments: false
+---
 
 # **1. Overview**
 
@@ -30,10 +29,10 @@ The deployment is fully automated using **Terraform**, enabling consistent, repe
 
 The goal of this architecture is to:
 
-* Provide a **secure and isolated environment** for application and database workloads.
-* Ensure **high availability** across multiple Availability Zones.
-* Maintain **resilience** and fault tolerance by leveraging AWS managed services.
-* Enable **infrastructure as code (IaC)** for repeatable and version-controlled deployments.
+- Provide a **secure and isolated environment** for application and database workloads.
+- Ensure **high availability** across multiple Availability Zones.
+- Maintain **resilience** and fault tolerance by leveraging AWS managed services.
+- Enable **infrastructure as code (IaC)** for repeatable and version-controlled deployments.
 
 ---
 
@@ -41,21 +40,21 @@ The goal of this architecture is to:
 
 #### **1.2.1 Presentation Layer (Web / Application Tier)**
 
-* Consists of **EC2 instances** running the application or web server.
-* Deployed in **private subnets** across multiple Availability Zones.
-* Traffic is distributed using an **Application Load Balancer (ALB)** deployed in public subnets.
-* The ALB routes HTTP and HTTPS traffic to the backend EC2 instances for processing.
+- Consists of **EC2 instances** running the application or web server.
+- Deployed in **private subnets** across multiple Availability Zones.
+- Traffic is distributed using an **Application Load Balancer (ALB)** deployed in public subnets.
+- The ALB routes HTTP and HTTPS traffic to the backend EC2 instances for processing.
 
 #### **1.2.2 Application / Logic Layer**
 
-* Handles core business logic and communicates with both the presentation and data tiers.
-* Uses **Elastic File System (EFS)** for shared storage between instances (e.g., logs, application data, uploads).
+- Handles core business logic and communicates with both the presentation and data tiers.
+- Uses **Elastic File System (EFS)** for shared storage between instances (e.g., logs, application data, uploads).
 
 #### **1.2.3 Data Layer**
 
-* Uses **Amazon RDS (MySQL)** as the managed relational database engine.
-* Deployed in **private subnets** with **Multi-AZ** replication for high availability.
-* Database access is restricted to only the application layer via security groups.
+- Uses **Amazon RDS (MySQL)** as the managed relational database engine.
+- Deployed in **private subnets** with **Multi-AZ** replication for high availability.
+- Database access is restricted to only the application layer via security groups.
 
 ---
 
@@ -77,11 +76,11 @@ The goal of this architecture is to:
 
 ### **1.4 High-Level Features**
 
-* **Multi-AZ Deployment:** Ensures redundancy and fault tolerance.
-* **Secure Networking:** Implements VPC isolation and least privilege access via security groups.
-* **Automated Provisioning:** Infrastructure managed using Terraform for consistency and versioning.
-* **Centralized Storage:** Shared EFS mounted across app instances for consistent file access.
-* **Monitoring & Logging:** Easily integrated with AWS CloudWatch for performance and health tracking.
+- **Multi-AZ Deployment:** Ensures redundancy and fault tolerance.
+- **Secure Networking:** Implements VPC isolation and least privilege access via security groups.
+- **Automated Provisioning:** Infrastructure managed using Terraform for consistency and versioning.
+- **Centralized Storage:** Shared EFS mounted across app instances for consistent file access.
+- **Monitoring & Logging:** Easily integrated with AWS CloudWatch for performance and health tracking.
 
 ---
 
@@ -89,10 +88,10 @@ The goal of this architecture is to:
 
 This architecture is suitable for:
 
-* Web applications requiring a secure and scalable backend.
-* Internal enterprise applications with strict access controls.
-* Multi-tier deployments (frontend, backend, and database separation).
-* Environments that require high availability and fault tolerance across AWS Availability Zones.
+- Web applications requiring a secure and scalable backend.
+- Internal enterprise applications with strict access controls.
+- Multi-tier deployments (frontend, backend, and database separation).
+- Environments that require high availability and fault tolerance across AWS Availability Zones.
 
 ---
 
@@ -116,80 +115,71 @@ The architecture is divided into multiple **Availability Zones (AZs)** to ensure
 
 #### **2.2.1 Networking Layer**
 
-* **VPC (Virtual Private Cloud)**:
+- **VPC (Virtual Private Cloud)**:
   Provides an isolated network environment for all deployed AWS resources.
 
-* **Subnets**:
+- **Subnets**:
+  - **Public Subnets** – Host the Application Load Balancer (ALB) and NAT Gateways.
+  - **Private Subnets** – Host EC2 application servers and RDS instances.
+  - Each subnet is distributed across **two Availability Zones** (e.g., `us-east-1a`, `us-east-1b`) for redundancy.
 
-  * **Public Subnets** – Host the Application Load Balancer (ALB) and NAT Gateways.
-  * **Private Subnets** – Host EC2 application servers and RDS instances.
-  * Each subnet is distributed across **two Availability Zones** (e.g., `us-east-1a`, `us-east-1b`) for redundancy.
-
-* **Internet Gateway**:
+- **Internet Gateway**:
   Enables inbound and outbound internet access for resources in public subnets.
 
-* **NAT Gateways**:
+- **NAT Gateways**:
   Allow EC2 instances in private subnets to access the internet for software updates without exposing them publicly.
 
 ---
 
 #### **2.2.2 Presentation Layer (Web Tier)**
 
-* **Application Load Balancer (ALB)**:
+- **Application Load Balancer (ALB)**:
+  - Acts as the entry point for all HTTP and HTTPS traffic.
+  - Deployed in **public subnets** for external accessibility.
+  - Routes requests to the EC2 instances in the private subnets via target groups.
+  - Supports both **HTTP (port 80)** and **HTTPS (port 443)** for secure communication.
 
-  * Acts as the entry point for all HTTP and HTTPS traffic.
-  * Deployed in **public subnets** for external accessibility.
-  * Routes requests to the EC2 instances in the private subnets via target groups.
-  * Supports both **HTTP (port 80)** and **HTTPS (port 443)** for secure communication.
-
-* **Route 53 (DNS)**:
-
-  * (Optional) Provides a custom domain name that maps to the ALB’s DNS.
-  * Improves accessibility and branding of the deployed application.
+- **Route 53 (DNS)**:
+  - (Optional) Provides a custom domain name that maps to the ALB’s DNS.
+  - Improves accessibility and branding of the deployed application.
 
 ---
 
 #### **2.2.3 Application Layer (App Tier)**
 
-* **EC2 Instances**:
+- **EC2 Instances**:
+  - Host the web or application logic (e.g., Nginx, Node.js, PHP, etc.).
+  - Deployed across multiple private subnets for high availability.
 
-  * Host the web or application logic (e.g., Nginx, Node.js, PHP, etc.).
-  * Deployed across multiple private subnets for high availability.
+- **EFS (Elastic File System)**:
+  - Provides shared storage accessible by all EC2 instances in the app tier.
+  - Commonly used for logs, session data, media uploads, or persistent application files.
 
-* **EFS (Elastic File System)**:
-
-  * Provides shared storage accessible by all EC2 instances in the app tier.
-  * Commonly used for logs, session data, media uploads, or persistent application files.
-
-* **EC2 Security Group**:
-
-  * Allows inbound traffic **only from the ALB** (port 80/443).
-  * Restricts outbound access to necessary services (e.g., database or NAT).
+- **EC2 Security Group**:
+  - Allows inbound traffic **only from the ALB** (port 80/443).
+  - Restricts outbound access to necessary services (e.g., database or NAT).
 
 ---
 
 #### **2.2.4 Data Layer (Database Tier)**
 
-* **Amazon RDS (MySQL)**:
+- **Amazon RDS (MySQL)**:
+  - Deployed in **private subnets** to ensure database isolation from the public internet.
+  - Configured for **Multi-AZ** deployment for failover and data durability.
+  - Includes **Primary** and **Replica** instances for read/write separation and redundancy.
 
-  * Deployed in **private subnets** to ensure database isolation from the public internet.
-  * Configured for **Multi-AZ** deployment for failover and data durability.
-  * Includes **Primary** and **Replica** instances for read/write separation and redundancy.
-
-* **RDS Security Group**:
-
-  * Allows inbound connections **only from the Application Layer** security group.
-  * Prevents direct public or administrative access from the internet.
+- **RDS Security Group**:
+  - Allows inbound connections **only from the Application Layer** security group.
+  - Prevents direct public or administrative access from the internet.
 
 ---
 
 #### **2.2.5 Storage Layer**
 
-* **Amazon EFS (Elastic File System)**:
-
-  * Accessible from all EC2 instances across Availability Zones.
-  * Scales automatically to store application files without the need for manual provisioning.
-  * Enforced by the **EFS Security Group** to allow only authorized NFS access from the app tier.
+- **Amazon EFS (Elastic File System)**:
+  - Accessible from all EC2 instances across Availability Zones.
+  - Scales automatically to store application files without the need for manual provisioning.
+  - Enforced by the **EFS Security Group** to allow only authorized NFS access from the app tier.
 
 ---
 
@@ -206,18 +196,18 @@ The architecture is divided into multiple **Availability Zones (AZs)** to ensure
 
 ### **2.4 High Availability & Fault Tolerance**
 
-* All tiers are deployed across **two Availability Zones** to ensure continuity in case of an AZ outage.
-* **NAT Gateways**, **App Servers**, and **RDS instances** are distributed between zones.
-* The **Application Load Balancer** automatically reroutes traffic to healthy targets during failures.
+- All tiers are deployed across **two Availability Zones** to ensure continuity in case of an AZ outage.
+- **NAT Gateways**, **App Servers**, and **RDS instances** are distributed between zones.
+- The **Application Load Balancer** automatically reroutes traffic to healthy targets during failures.
 
 ---
 
 ### **2.5 Security Considerations**
 
-* No direct SSH or RDP access to EC2 instances from the internet.
-* Communication between tiers is restricted via **dedicated Security Groups**.
-* The **database and EFS** are deployed in private subnets with no internet exposure.
-* HTTPS is recommended for all external traffic to ensure encryption in transit.
+- No direct SSH or RDP access to EC2 instances from the internet.
+- Communication between tiers is restricted via **dedicated Security Groups**.
+- The **database and EFS** are deployed in private subnets with no internet exposure.
+- HTTPS is recommended for all external traffic to ensure encryption in transit.
 
 ---
 
@@ -228,11 +218,11 @@ Each component is modular and defined using **Terraform** for ease of deployment
 
 The architecture is divided into **five main categories**:
 
-* **Networking**
-* **Compute**
-* **Storage**
-* **Database**
-* **Security**
+- **Networking**
+- **Compute**
+- **Storage**
+- **Database**
+- **Security**
 
 ---
 
@@ -242,39 +232,37 @@ The networking layer provides the foundation for communication and isolation bet
 
 #### **3.1.1 VPC (Virtual Private Cloud)**
 
-* Defines a logically isolated network within AWS.
-* CIDR block: typically `10.0.0.0/16` (customizable through variables).
-* Hosts all public and private subnets used by other resources.
-* Acts as a boundary for all communication and routing.
+- Defines a logically isolated network within AWS.
+- CIDR block: typically `10.0.0.0/16` (customizable through variables).
+- Hosts all public and private subnets used by other resources.
+- Acts as a boundary for all communication and routing.
 
 #### **3.1.2 Subnets**
 
-* **Public Subnets**
+- **Public Subnets**
+  - Host resources that require internet access such as the **Application Load Balancer** and **NAT Gateways**.
+  - Associated with a route table that routes traffic to the **Internet Gateway**.
 
-  * Host resources that require internet access such as the **Application Load Balancer** and **NAT Gateways**.
-  * Associated with a route table that routes traffic to the **Internet Gateway**.
-
-* **Private Subnets**
-
-  * Host internal resources such as **EC2 application servers**, **RDS databases**, and **EFS**.
-  * Access to the internet is provided via **NAT Gateways**, not directly.
-  * Ensures that private resources remain isolated from public exposure.
+- **Private Subnets**
+  - Host internal resources such as **EC2 application servers**, **RDS databases**, and **EFS**.
+  - Access to the internet is provided via **NAT Gateways**, not directly.
+  - Ensures that private resources remain isolated from public exposure.
 
 #### **3.1.3 Internet Gateway**
 
-* Enables inbound and outbound traffic between the VPC and the internet.
-* Attached to the VPC and routes requests from public subnets.
+- Enables inbound and outbound traffic between the VPC and the internet.
+- Attached to the VPC and routes requests from public subnets.
 
 #### **3.1.4 NAT Gateways**
 
-* Deployed in each public subnet for redundancy.
-* Allow instances in private subnets to access the internet for updates and package installations without direct exposure.
+- Deployed in each public subnet for redundancy.
+- Allow instances in private subnets to access the internet for updates and package installations without direct exposure.
 
 #### **3.1.5 Route Tables**
 
-* Define how traffic is routed within the VPC.
-* Public subnets route through the **Internet Gateway**, while private subnets route through **NAT Gateways**.
-* Each subnet is explicitly associated with the appropriate route table.
+- Define how traffic is routed within the VPC.
+- Public subnets route through the **Internet Gateway**, while private subnets route through **NAT Gateways**.
+- Each subnet is explicitly associated with the appropriate route table.
 
 ---
 
@@ -284,27 +272,27 @@ This layer hosts the application workload and provides compute capacity for the 
 
 #### **3.2.1 EC2 Instances (App Servers)**
 
-* Run the web application or middleware logic.
-* Deployed in **private subnets** for security.
-* Typically configured with Nginx, Apache, Node.js, or PHP-FPM depending on the workload.
-* Optionally managed by **Auto Scaling Groups** to maintain elasticity and availability.
+- Run the web application or middleware logic.
+- Deployed in **private subnets** for security.
+- Typically configured with Nginx, Apache, Node.js, or PHP-FPM depending on the workload.
+- Optionally managed by **Auto Scaling Groups** to maintain elasticity and availability.
 
 #### **3.2.2 Application Load Balancer (ALB)**
 
-* Distributes incoming traffic across multiple EC2 instances in different Availability Zones.
-* Operates at **Layer 7 (HTTP/HTTPS)** for intelligent routing.
-* Supports:
+- Distributes incoming traffic across multiple EC2 instances in different Availability Zones.
+- Operates at **Layer 7 (HTTP/HTTPS)** for intelligent routing.
+- Supports:
+  - **HTTP (port 80)** for general access.
+  - **HTTPS (port 443)** for encrypted communication.
 
-  * **HTTP (port 80)** for general access.
-  * **HTTPS (port 443)** for encrypted communication.
-* Integrated with **Target Groups** to register healthy EC2 instances dynamically.
-* Provides **health checks** to detect and isolate unhealthy targets.
+- Integrated with **Target Groups** to register healthy EC2 instances dynamically.
+- Provides **health checks** to detect and isolate unhealthy targets.
 
 #### **3.2.3 Target Groups**
 
-* Define the set of EC2 instances (targets) that receive traffic from the ALB.
-* Each group listens on the defined application port (e.g., port 80).
-* Health checks ensure requests are routed only to healthy targets.
+- Define the set of EC2 instances (targets) that receive traffic from the ALB.
+- Each group listens on the defined application port (e.g., port 80).
+- Health checks ensure requests are routed only to healthy targets.
 
 ---
 
@@ -314,15 +302,15 @@ Storage components provide persistent and shared storage solutions for the appli
 
 #### **3.3.1 Elastic File System (EFS)**
 
-* Shared network file system accessible by all EC2 instances.
-* Used for:
+- Shared network file system accessible by all EC2 instances.
+- Used for:
+  - Application assets
+  - Logs
+  - Media uploads
+  - Shared configuration files
 
-  * Application assets
-  * Logs
-  * Media uploads
-  * Shared configuration files
-* Scales automatically with demand.
-* Accessible only within the VPC via NFS and secured with an **EFS Security Group**.
+- Scales automatically with demand.
+- Accessible only within the VPC via NFS and secured with an **EFS Security Group**.
 
 ---
 
@@ -332,24 +320,23 @@ The database layer provides persistent, managed storage for application data.
 
 #### **3.4.1 Amazon RDS (MySQL)**
 
-* Provides a managed relational database service for the application.
-* Deployed in **private subnets** to ensure isolation.
-* Configured with:
+- Provides a managed relational database service for the application.
+- Deployed in **private subnets** to ensure isolation.
+- Configured with:
+  - **Primary Database Instance** in one Availability Zone.
+  - **Read Replica** or **Multi-AZ Deployment** in another Availability Zone for redundancy and load balancing.
 
-  * **Primary Database Instance** in one Availability Zone.
-  * **Read Replica** or **Multi-AZ Deployment** in another Availability Zone for redundancy and load balancing.
-* Automatically handles:
-
-  * Backups
-  * Patching
-  * Failover
-  * Storage scaling
+- Automatically handles:
+  - Backups
+  - Patching
+  - Failover
+  - Storage scaling
 
 #### **3.4.2 Database Security**
 
-* The RDS instance is associated with a dedicated **MySQL Security Group**.
-* Inbound connections allowed only from the **App Server Security Group**.
-* No direct internet access permitted.
+- The RDS instance is associated with a dedicated **MySQL Security Group**.
+- Inbound connections allowed only from the **App Server Security Group**.
+- No direct internet access permitted.
 
 ---
 
@@ -370,22 +357,22 @@ Security groups control inbound and outbound traffic to AWS resources.
 
 #### **3.5.2 Network Access Control Lists (NACLs)**
 
-* Provide an additional layer of subnet-level security.
-* Optional but recommended for environments requiring stricter ingress and egress filtering.
+- Provide an additional layer of subnet-level security.
+- Optional but recommended for environments requiring stricter ingress and egress filtering.
 
 #### **3.5.3 IAM Roles and Policies**
 
-* Used to grant EC2 instances permissions to access AWS services securely (e.g., S3, CloudWatch).
-* Ensures that no hardcoded credentials are used within instances or configuration files.
+- Used to grant EC2 instances permissions to access AWS services securely (e.g., S3, CloudWatch).
+- Ensures that no hardcoded credentials are used within instances or configuration files.
 
 ---
 
 ### **3.6 Optional Components**
 
-* **CloudWatch Monitoring** – For real-time monitoring, alarms, and performance insights.
-* **Route 53** – For DNS and custom domain routing to the ALB.
-* **Certificate Manager (ACM)** – For managing SSL/TLS certificates when using HTTPS.
-* **S3 Buckets** – For centralized log storage or backups.
+- **CloudWatch Monitoring** – For real-time monitoring, alarms, and performance insights.
+- **Route 53** – For DNS and custom domain routing to the ALB.
+- **Certificate Manager (ACM)** – For managing SSL/TLS certificates when using HTTPS.
+- **S3 Buckets** – For centralized log storage or backups.
 
 ---
 
@@ -413,15 +400,14 @@ Follow these steps to provision the infrastructure and deploy your three-tier ar
 
 Before deployment, ensure the following tools and credentials are set up:
 
-* An **AWS account** with sufficient permissions (AdministratorAccess or equivalent IAM role).
-* **Terraform** installed (version 1.6 or higher recommended).
-* **AWS CLI** configured with credentials (`aws configure`).
-* Access to Terraform modules and variable files defined within this repository.
-* Recommended tools:
-
-  * `tflint` for linting Terraform code.
-  * `terraform-docs` for generating documentation.
-  * `checkov` or `terrascan` for static security scanning.
+- An **AWS account** with sufficient permissions (AdministratorAccess or equivalent IAM role).
+- **Terraform** installed (version 1.6 or higher recommended).
+- **AWS CLI** configured with credentials (`aws configure`).
+- Access to Terraform modules and variable files defined within this repository.
+- Recommended tools:
+  - `tflint` for linting Terraform code.
+  - `terraform-docs` for generating documentation.
+  - `checkov` or `terrascan` for static security scanning.
 
 ---
 
@@ -539,10 +525,9 @@ The repository is organized as follows:
    Terraform will provision VPC, subnets, security groups, EC2 instances, load balancer, EFS, and RDS.
 
 6. **Verify the Deployment**
-
-   * Navigate to the **AWS Management Console** → **EC2** → confirm instances are running.
-   * Open the **Application Load Balancer DNS name** in a browser (Terraform output variable).
-   * Confirm the application or placeholder page is accessible.
+   - Navigate to the **AWS Management Console** → **EC2** → confirm instances are running.
+   - Open the **Application Load Balancer DNS name** in a browser (Terraform output variable).
+   - Confirm the application or placeholder page is accessible.
 
 7. **Clean Up (Optional)**
 
@@ -553,9 +538,9 @@ The repository is organized as follows:
    Destroys all infrastructure created by Terraform.
 
 8. **Example of terraform.tfvars**
-   Below is an example configuration for the terraform.tfvars file that defines environment-specific parameters: 
-   
-   ``````bash
+   Below is an example configuration for the terraform.tfvars file that defines environment-specific parameters:
+
+   ```bash
    # Project details
     project_name = "project-A"
 
@@ -633,7 +618,8 @@ The repository is organized as follows:
     allocated_storage  = "20"
     rds_username       = "<username>"
     rds_password       = "<password>"
-   ``````
+   ```
+
 ---
 
 ## **4.2 Future Enhancements**
@@ -642,40 +628,40 @@ Although the core architecture is functional, the following enhancements will im
 
 ### **4.2.1 Enable CloudWatch Monitoring**
 
-* Configure **Amazon CloudWatch** to collect and visualize key metrics from:
+- Configure **Amazon CloudWatch** to collect and visualize key metrics from:
+  - **EC2 instances:** CPU utilization, network I/O, and disk performance.
+  - **RDS database:** connections, read/write latency, storage, and free memory.
+  - **ALB:** request counts, target response times, and HTTP error rates.
 
-  * **EC2 instances:** CPU utilization, network I/O, and disk performance.
-  * **RDS database:** connections, read/write latency, storage, and free memory.
-  * **ALB:** request counts, target response times, and HTTP error rates.
-* Set up **CloudWatch Alarms** for threshold breaches (e.g., high CPU, low storage).
-* Optionally integrate **CloudWatch Logs** for application and system logs from EC2.
+- Set up **CloudWatch Alarms** for threshold breaches (e.g., high CPU, low storage).
+- Optionally integrate **CloudWatch Logs** for application and system logs from EC2.
 
 ### **4.2.2 Enable AWS Backup for RDS and EFS**
 
-* Implement **AWS Backup** policies to automate and centralize backups for:
+- Implement **AWS Backup** policies to automate and centralize backups for:
+  - **RDS databases** (daily incremental and weekly full backups).
+  - **EFS file systems** for application data.
 
-  * **RDS databases** (daily incremental and weekly full backups).
-  * **EFS file systems** for application data.
-* Use **lifecycle policies** to transition older backups to cold storage (Glacier) for cost efficiency.
-* Validate recovery by performing periodic restore tests in non-production environments.
+- Use **lifecycle policies** to transition older backups to cold storage (Glacier) for cost efficiency.
+- Validate recovery by performing periodic restore tests in non-production environments.
 
 ### **4.2.3 Use AWS Systems Manager (SSM)**
 
-* Leverage **AWS Systems Manager** for:
+- Leverage **AWS Systems Manager** for:
+  - **Patching** EC2 instances automatically via Patch Manager.
+  - **Secure parameter storage** (e.g., DB passwords, API keys) using **Parameter Store**.
+  - **Session Manager** to access private EC2 instances securely without SSH keys.
 
-  * **Patching** EC2 instances automatically via Patch Manager.
-  * **Secure parameter storage** (e.g., DB passwords, API keys) using **Parameter Store**.
-  * **Session Manager** to access private EC2 instances securely without SSH keys.
-* Integrate Terraform with SSM parameters for dynamic configuration management.
+- Integrate Terraform with SSM parameters for dynamic configuration management.
 
 ---
 
 ### **4.2.4 Additional Considerations**
 
-* **Implement HTTPS:** Add an ACM-issued certificate and configure HTTPS listener on the ALB.
-* **Add CI/CD Integration:** Use GitHub Actions or AWS CodePipeline to automate Terraform deployment and testing.
-* **Introduce Caching:** Integrate **Amazon ElastiCache (Redis)** to enhance performance for read-heavy workloads.
-* **Add Bastion Host or VPN Access:** For secure administrative access to private instances if SSM is not used.
+- **Implement HTTPS:** Add an ACM-issued certificate and configure HTTPS listener on the ALB.
+- **Add CI/CD Integration:** Use GitHub Actions or AWS CodePipeline to automate Terraform deployment and testing.
+- **Introduce Caching:** Integrate **Amazon ElastiCache (Redis)** to enhance performance for read-heavy workloads.
+- **Add Bastion Host or VPN Access:** For secure administrative access to private instances if SSM is not used.
 
 ---
 
@@ -683,6 +669,6 @@ Although the core architecture is functional, the following enhancements will im
 
 After following these steps, you will have:
 
-* A fully deployed **three-tier AWS infrastructure** provisioned via Terraform.
-* An environment capable of supporting **high availability**, **scalability**, and **security best practices**.
-* A roadmap of **enhancements** to improve operational efficiency and monitoring.
+- A fully deployed **three-tier AWS infrastructure** provisioned via Terraform.
+- An environment capable of supporting **high availability**, **scalability**, and **security best practices**.
+- A roadmap of **enhancements** to improve operational efficiency and monitoring.
