@@ -2,12 +2,13 @@
 title: 'CI/CD for Hugo: AWS, GitHub Actions & Cloudflare via Terraform'
 description: 'Build a secure, automated pipeline for Hugo using GitHub Actions, Terraform, AWS, and Cloudflare.'
 date: '2025-10-13'
-image: 'terraform-aws-03.webp'
+image: 'images/terraform-aws-03.webp'
 draft: false
 
 categories:
-  - 'CI/CD Automation'
-  - 'Infrastructure as Code (IaC)'
+  - 'aws'
+  - 'ci-cd'
+  - 'terraform'
 
 toc: true
 readingTime: true

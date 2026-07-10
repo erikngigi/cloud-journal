@@ -6,9 +6,8 @@ image: 'images/bash-scripting-01.jpg'
 draft: false
 
 categories:
-  - 'Scripting'
-  - 'Terraform'
-  - 'Python'
+  - 'bash'
+  - 'terraform'
 
 toc: true
 math: false

@@ -2,11 +2,12 @@
 title: 'Terraform AWS Three Tier Architecture'
 description: 'A Terraform AWS Three Tier Architecture Automation'
 date: '2025-10-10'
-image: 'terraform-aws-03.webp'
+image: 'images/terraform-aws-03.webp'
 draft: false
 
 categories:
-  - 'Infrastructure as Code (IaC)'
+  - 'aws'
+  - 'terraform'
 
 toc: true
 math: false
@@ -103,7 +104,7 @@ The following diagram illustrates the **Three-Tier AWS Architecture** implemente
 
 ### **2.1 Diagram**
 
-![AWS Three Tier Architecture](terraform-aws-three-tier-architecture.png)
+![AWS Three Tier Architecture](images/terraform-aws-three-tier-architecture.png)
 
 ---
 
