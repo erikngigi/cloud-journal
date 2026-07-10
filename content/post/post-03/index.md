@@ -28,7 +28,7 @@ By the end of this guide, you’ll understand how each Terraform module - **stor
 
 ## **Project Structure and Module Overview**
 
-![Terraform AWS CI/CD Project Structure](terraform-aws-hugo-cicd-level-2.png)
+![Terraform AWS CI/CD Project Structure](images/terraform-aws-hugo-cicd-level-2.png)
 
 Before diving into the implementation, it’s important to understand how the Terraform configuration is organized. The project follows a modular design, where each core component of the infrastructure - storage, networking, security, and DNS - is defined as an independent Terraform module. This structure improves readability, reusability, and scalability, allowing you to make updates to one part of the infrastructure without affecting the others.
 
