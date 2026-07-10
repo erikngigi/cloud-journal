@@ -139,8 +139,10 @@
   list-style: none;
   overflow-y: auto;
   flex-grow: 1;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
+  font-weight: bold;
   background-color: var(--card-background);
+  color: var(--sidebar-menu-color-text);
 
   box-shadow: var(--shadow-l1);
   display: none;
@@ -201,10 +203,10 @@
       transition: color 0.2s ease;
 
       &:hover {
-        color: var(--svg-icon-color);
+        color: var(--sidebar-menu-color-text);
 
         svg {
-          stroke: var(--svg-icon-color);
+          stroke: var(--sidebar-menu-color-svg);
         }
       }
     }
@@ -215,11 +217,11 @@
 
     &.current {
       a {
-        color: var(--svg-icon-color);
+        color: var(--sidebar-menu-color-text);
       }
 
       svg {
-        stroke: var(--svg-icon-color);
+        stroke: var(--sidebar-menu-color-svg);
       }
     }
 
@@ -245,7 +247,14 @@
   svg {
     width: 25px;
     height: 25px;
-    stroke: var(--svg-icon-color);
+    stroke: var(--sidebar-menu-color-svg);
     stroke-width: 1.33;
+    /* Change transition from 'color' to 'stroke' */
+    transition: stroke 0.2s ease;
+
+    /* '&' refers directly to the svg itself */
+    &:hover {
+      stroke: var(--accent-color);
+    }
   }
 }

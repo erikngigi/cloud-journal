@@ -9,23 +9,23 @@
   }
 
   --body-background: #f5f5fa;
-
   --accent-color: #34495e;
   --accent-color-darker: #2c3e50;
   --accent-color-text: #fff;
   --body-text-color: #707070;
-
   --tag-border-radius: 4px;
-
   --section-separation: 40px;
 
   &[data-scheme='dark'] {
-    --body-background: #12131a;
+    --body-background: #101014;
     --accent-color: #ecf0f1;
     --accent-color-darker: #bdc3c7;
     --accent-color-text: #000;
     --body-text-color: #ffffff;
     --svg-icon-color: #38bdf8;
+    --sidebar-menu-color-text: #428beb;
+    --sidebar-menu-color-svg: #428beb;
+    --category-color-icon: #ae3324;
   }
 }
 
@@ -35,7 +35,7 @@
 :root {
   --sys-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Droid Sans', 'Helvetica Neue';
   --base-font-family: 'Roboto', var(--sys-font-family), sans-serif;
-  --code-font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
+  --code-font-family: 'JetBrains Mono', Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
 /*
@@ -69,7 +69,7 @@
   }
 
   &[data-scheme='dark'] {
-    --card-background: #1e293b;
+    --card-background: #202020;
     --card-background-selected: rgba(255, 255, 255, 0.16);
     --card-text-color-main: rgba(255, 255, 255, 0.9);
     --card-text-color-secondary: rgba(255, 255, 255, 0.7);
