@@ -5,6 +5,7 @@ url = "https://github.com/erikngigi"
 
 [social.params]
 icon = "brand-github"
+newTab = true
 
 [[social]]
 identifier = "linkedin"
@@ -13,6 +14,7 @@ url = "https://linkedin.com/in/erikngigi"
 
 [social.params]
 icon = "brand-linkedin"
+newTab = true
 
 [[social]]
 identifier = "youtube"
@@ -21,24 +23,16 @@ url = "https://youtube.com/@erikngigi"
 
 [social.params]
 icon = "brand-youtube"
+newTab = true
 
 [[social]]
 identifier = "upwork"
 name = "Upwork"
-url = "https://youtube.com/@erikngigi"
+url = "https://www.upwork.com/freelancers/~0158c05089674278af?viewMode=1"
 
 [social.params]
 icon = "brand-upwork"
-
-[[main]]
-identifier = "home"
-name = "Home"
-url = "/"
-weight = 1
-
-[main.params]
-icon = "home-cog"
-newTab = false
+newTab = true
 
 # [[main]]
 # identifier =
@@ -49,23 +43,3 @@ newTab = false
 # [[main.params]]
 # icon = 
 # newTab =
-
-[[main]]
-identifier = "resume"
-name = "Resume"
-url = "/resume/"
-weight = 3
-
-[[main.params]]
-icon = "file-cv"
-newTab = true
-
-[[main]]
-identifier = "about"
-name = "About"
-url = "/about/"
-weight = 5
-
-[[main.params]]
-icon = "info-hexagon"
-newTab = false

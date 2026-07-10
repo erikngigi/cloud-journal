@@ -64,8 +64,8 @@ warning = "⚠️"
 caution = "🚨"
 
 [widgets]
-homepage = []
-page = []
+homepage = [{ type = "search" }]
+page = [{ type = "toc" }]
 
 [opengraph.twitter]
 site = ""
