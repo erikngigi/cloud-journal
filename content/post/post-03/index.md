@@ -141,7 +141,7 @@ output "github_action_role_arn" {
 }
 ```
 
-![GitHub Action Hugo Deploy IAM Role](terraform-aws-hugo-ci-cd-iam-role-1.png)
+![GitHub Action Hugo Deploy IAM Role](images/terraform-aws-hugo-ci-cd-iam-role-1.png)
 
 This ARN will be used later in the **GitHub Actions workflow** when configuring AWS credentials.
 
@@ -248,7 +248,7 @@ output "s3_bucket_name" {
 }
 ```
 
-![Hugo S3 Bucket](terraform-aws-hugo-ci-cd-s3-bucket.png)
+![Hugo S3 Bucket](images/terraform-aws-hugo-ci-cd-s3-bucket.png)
 
 ### **Attaching IAM Policy to the GitHub Actions Role**
 
@@ -567,7 +567,7 @@ EOT
 
 This allows users to access `/about/` instead of `/about/index.html`, providing a cleaner and more professional URL structure.
 
-![Hugo CloudFront Function](terraform-aws-hugo-ci-cd-cloudfront-functions.png)
+![Hugo CloudFront Function](images/terraform-aws-hugo-ci-cd-cloudfront-functions.png)
 
 ### **CloudFront Distribution Configuration**
 
@@ -648,7 +648,7 @@ resource "aws_cloudfront_distribution" "hugo_site" {
 
 This configuration enforces HTTPS, compresses content for faster delivery, and integrates directly with ACM for secure SSL termination.
 
-![Hugo CloudFront Distribution](terraform-aws-hugo-ci-cd-cloudfront-distribution.png)
+![Hugo CloudFront Distribution](images/terraform-aws-hugo-ci-cd-cloudfront-distribution.png)
 
 ### **SSL Certificate with AWS Certificate Manager (ACM)**
 
@@ -676,7 +676,7 @@ resource "aws_acm_certificate" "hugo_site" {
 }
 ```
 
-![Hugo ACM Certificate](terraform-aws-hugo-cicd-certificate-manager.png)
+![Hugo ACM Certificate](images/terraform-aws-hugo-cicd-certificate-manager.png)
 
 `Note: For CloudFront, the ACM certificate must always be created in the us-east-1 region.`
 
@@ -848,5 +848,3 @@ At this point, your **Hugo static website** is:
 - Connected to a **custom subdomain** via **Cloudflare**, ensuring secure and performant access.
 
 This final step completes the end-to-end automation of your CI/CD pipeline—combining Terraform’s Infrastructure as Code, GitHub Actions’ automation, and the scalability of AWS and Cloudflare.
-
-![image 1](terraform-aws-ci-cd-0.png) ![image 2](terraform-aws-hugo-ci-cd-cloudfront-distribution.png) ![image 3](terraform-aws-hugo-cicd-level-2.png) ![image 4](terraform-aws-hugo-ci-cd-s3-bucket.png)
