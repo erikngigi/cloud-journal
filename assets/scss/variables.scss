@@ -23,8 +23,8 @@
     --accent-color-text: #000;
     --body-text-color: #ffffff;
     --svg-icon-color: #38bdf8;
-    --sidebar-menu-color-text: #428beb;
-    --sidebar-menu-color-svg: #428beb;
+    --sidebar-menu-color-text: #ae3324;
+    --sidebar-menu-color-svg: #ae3324;
     --category-color-icon: #ae3324;
   }
 }
@@ -125,8 +125,8 @@
   --kbd-border-color: #dadada;
 
   &[data-scheme='dark'] {
-    --code-background-color: #272822;
-    --code-text-color: rgba(255, 255, 255, 0.9);
+    --code-background-color: #000000;
+    --code-text-color: #ffffffbe;
 
     --table-border-color: #717171;
     --tr-even-background-color: #545454;
@@ -162,7 +162,7 @@
 }
 
 :root {
-  --menu-icon-separation: 40px;
+  --menu-icon-separation: 20px;
   --container-padding: 15px;
 
   @include respond(md) {
