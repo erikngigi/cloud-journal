@@ -1,4 +1,4 @@
 ---
 title: 'AWS'
-icon: 'brand-aws'
+icon: 'fontawesome7/brands/aws'
 ---

@@ -4,7 +4,7 @@ name = "GitHub"
 url = "https://github.com/erikngigi"
 
 [social.params]
-icon = "brand-github"
+icon = "tabler/brand-github"
 newTab = true
 
 [[social]]
@@ -13,7 +13,7 @@ name = "Linkedin"
 url = "https://linkedin.com/in/erikngigi"
 
 [social.params]
-icon = "brand-linkedin"
+icon = "tabler/brand-linkedin"
 newTab = true
 
 [[social]]
@@ -22,7 +22,7 @@ name = "YouTube"
 url = "https://youtube.com/@erikngigi"
 
 [social.params]
-icon = "brand-youtube"
+icon = "tabler/brand-youtube"
 newTab = true
 
 [[social]]
@@ -31,7 +31,7 @@ name = "Upwork"
 url = "https://www.upwork.com/freelancers/~0158c05089674278af?viewMode=1"
 
 [social.params]
-icon = "brand-upwork"
+icon = "tabler/brand-upwork"
 newTab = true
 
 # [[main]]

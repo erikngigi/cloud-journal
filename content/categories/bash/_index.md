@@ -1,4 +1,4 @@
 ---
 title: 'Bash Scripting'
-icon: 'terminal-2'
+icon: 'tabler/terminal-2'
 ---

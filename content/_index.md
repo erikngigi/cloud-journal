@@ -4,6 +4,5 @@ menu:
     name: Home
     weight: 1
     params:
-      icon: home-cog
+      icon: tabler/home-cog
 ---
-

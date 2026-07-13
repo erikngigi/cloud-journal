@@ -18,9 +18,11 @@ comments: false
 
 # **1. Overview**
 
-This project implements a **Three-Tier Architecture on AWS**, designed to provide a secure and highly available environment for deploying modern web applications.
+This project implements a **Three-Tier Architecture on AWS**, designed to provide a secure and highly available
+environment for deploying modern web applications.
 
-The architecture separates components into three logical layers: **Presentation (Web/App Tier)**, **Application (Logic Tier)**, and **Data (Database Tier)** to ensure clear separation of concerns, better security, and easier scalability.
+The architecture separates components into three logical layers: **Presentation (Web/App Tier)**, **Application (Logic
+Tier)**, and **Data (Database Tier)** to ensure clear separation of concerns, better security, and easier scalability.
 
 The deployment is fully automated using **Terraform**, enabling consistent, repeatable infrastructure provisioning.
 
@@ -98,7 +100,9 @@ This architecture is suitable for:
 
 # **2. Architecture Diagram**
 
-The following diagram illustrates the **Three-Tier AWS Architecture** implemented in this project. It depicts how each layer — **presentation**, **application**, and **data** — is logically and physically separated within the AWS environment to provide scalability, fault tolerance, and security.
+The following diagram illustrates the **Three-Tier AWS Architecture** implemented in this project. It depicts how each
+layer — **presentation**, **application**, and **data** — is logically and physically separated within the AWS
+environment to provide scalability, fault tolerance, and security.
 
 ---
 
@@ -110,25 +114,24 @@ The following diagram illustrates the **Three-Tier AWS Architecture** implemente
 
 ### **2.2 Architectural Components**
 
-The architecture is divided into multiple **Availability Zones (AZs)** to ensure **high availability** and **fault tolerance**. Each tier performs a specific role as outlined below:
+The architecture is divided into multiple **Availability Zones (AZs)** to ensure **high availability** and **fault
+tolerance**. Each tier performs a specific role as outlined below:
 
 ---
 
 #### **2.2.1 Networking Layer**
 
-- **VPC (Virtual Private Cloud)**:
-  Provides an isolated network environment for all deployed AWS resources.
+- **VPC (Virtual Private Cloud)**: Provides an isolated network environment for all deployed AWS resources.
 
 - **Subnets**:
   - **Public Subnets** – Host the Application Load Balancer (ALB) and NAT Gateways.
   - **Private Subnets** – Host EC2 application servers and RDS instances.
   - Each subnet is distributed across **two Availability Zones** (e.g., `us-east-1a`, `us-east-1b`) for redundancy.
 
-- **Internet Gateway**:
-  Enables inbound and outbound internet access for resources in public subnets.
+- **Internet Gateway**: Enables inbound and outbound internet access for resources in public subnets.
 
-- **NAT Gateways**:
-  Allow EC2 instances in private subnets to access the internet for software updates without exposing them publicly.
+- **NAT Gateways**: Allow EC2 instances in private subnets to access the internet for software updates without exposing
+  them publicly.
 
 ---
 
@@ -191,7 +194,8 @@ The architecture is divided into multiple **Availability Zones (AZs)** to ensure
 3. The ALB forwards traffic to **EC2 instances** in private subnets via **Target Groups**.
 4. The **EC2 application servers** process requests, interact with the **RDS database** and **EFS** as needed.
 5. **Outbound internet access** (for software updates or dependency downloads) is routed through the **NAT Gateways**.
-6. All communication between layers is controlled using **Security Groups** and restricted by the principle of least privilege.
+6. All communication between layers is controlled using **Security Groups** and restricted by the principle of least
+   privilege.
 
 ---
 
@@ -214,8 +218,8 @@ The architecture is divided into multiple **Availability Zones (AZs)** to ensure
 
 # **3. Components**
 
-This section describes the core AWS infrastructure components that make up the three-tier architecture.
-Each component is modular and defined using **Terraform** for ease of deployment, management, and scalability.
+This section describes the core AWS infrastructure components that make up the three-tier architecture. Each component
+is modular and defined using **Terraform** for ease of deployment, management, and scalability.
 
 The architecture is divided into **five main categories**:
 
@@ -229,7 +233,8 @@ The architecture is divided into **five main categories**:
 
 ### **3.1 Networking Components**
 
-The networking layer provides the foundation for communication and isolation between resources. It defines the virtual network, subnets, routing, and internet access.
+The networking layer provides the foundation for communication and isolation between resources. It defines the virtual
+network, subnets, routing, and internet access.
 
 #### **3.1.1 VPC (Virtual Private Cloud)**
 
@@ -257,7 +262,8 @@ The networking layer provides the foundation for communication and isolation bet
 #### **3.1.4 NAT Gateways**
 
 - Deployed in each public subnet for redundancy.
-- Allow instances in private subnets to access the internet for updates and package installations without direct exposure.
+- Allow instances in private subnets to access the internet for updates and package installations without direct
+  exposure.
 
 #### **3.1.5 Route Tables**
 
@@ -381,7 +387,8 @@ Security groups control inbound and outbound traffic to AWS resources.
 
 1. **External users** send requests via a DNS name (Route 53 or ALB URL).
 2. The **ALB** receives the request and forwards it to EC2 **App Servers** in private subnets.
-3. The **App Servers** process the requests, read/write data from the **RDS** database, and access shared files via **EFS**.
+3. The **App Servers** process the requests, read/write data from the **RDS** database, and access shared files via
+   **EFS**.
 4. Any outbound connections (e.g., software updates) go through **NAT Gateways** in the public subnets.
 5. **Security Groups** ensure that only permitted communication flows between layers.
 
@@ -389,7 +396,8 @@ Security groups control inbound and outbound traffic to AWS resources.
 
 # **4. Deployment Steps and Future Enhancements**
 
-This section outlines how to deploy the three-tier AWS architecture using Terraform, along with planned improvements for better monitoring, backup, and system management.
+This section outlines how to deploy the three-tier AWS architecture using Terraform, along with planned improvements for
+better monitoring, backup, and system management.
 
 ---
 
@@ -522,8 +530,8 @@ The repository is organized as follows:
    terraform apply -var-file=dev.tfvars
    ```
 
-   Type `yes` to confirm and deploy the architecture.
-   Terraform will provision VPC, subnets, security groups, EC2 instances, load balancer, EFS, and RDS.
+   Type `yes` to confirm and deploy the architecture. Terraform will provision VPC, subnets, security groups, EC2
+   instances, load balancer, EFS, and RDS.
 
 6. **Verify the Deployment**
    - Navigate to the **AWS Management Console** → **EC2** → confirm instances are running.
@@ -538,8 +546,8 @@ The repository is organized as follows:
 
    Destroys all infrastructure created by Terraform.
 
-8. **Example of terraform.tfvars**
-   Below is an example configuration for the terraform.tfvars file that defines environment-specific parameters:
+8. **Example of terraform.tfvars** Below is an example configuration for the terraform.tfvars file that defines
+   environment-specific parameters:
 
    ```bash
    # Project details
@@ -625,7 +633,8 @@ The repository is organized as follows:
 
 ## **4.2 Future Enhancements**
 
-Although the core architecture is functional, the following enhancements will improve **observability**, **resilience**, and **operational management**.
+Although the core architecture is functional, the following enhancements will improve **observability**, **resilience**,
+and **operational management**.
 
 ### **4.2.1 Enable CloudWatch Monitoring**
 

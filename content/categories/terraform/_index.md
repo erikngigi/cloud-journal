@@ -1,4 +1,4 @@
 ---
 title: 'Terraform'
-icon: 'brand-terraform'
+icon: 'tabler/brand-terraform'
 ---

@@ -1,4 +1,4 @@
 ---
 title: 'CI/CD'
-icon: 'arrow-ramp-right'
+icon: 'fontawesome7/brands/git-alt'
 ---

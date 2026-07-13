@@ -13,7 +13,7 @@ hasCJKLanguage = false
 #     path = "github.com/CaiJimmy/hugo-theme-stack/v3"
 
 [pagination]
-pagerSize = 3
+pagerSize = 10
 
 [permalinks]
 post = "/p/:slug/"

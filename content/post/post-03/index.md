@@ -20,38 +20,63 @@ comments: true
 
 ## **Introduction**
 
-In modern web development, automation has become a cornerstone of efficiency and reliability. Static site generators like **Hugo** make it easy to build fast, lightweight websites, but deploying and managing them securely and consistently can be challenging without proper automation. That’s where **Terraform**, **AWS**, **Cloudflare**, and **GitHub Actions** come together to create a fully automated and secure deployment pipeline.
+In modern web development, automation has become a cornerstone of efficiency and reliability. Static site generators
+like **Hugo** make it easy to build fast, lightweight websites, but deploying and managing them securely and
+consistently can be challenging without proper automation. That’s where **Terraform**, **AWS**, **Cloudflare**, and
+**GitHub Actions** come together to create a fully automated and secure deployment pipeline.
 
-This article walks through the automation of a **Hugo CI/CD pipeline** using **Terraform** to provision cloud resources and **GitHub Actions** to handle continuous integration and delivery. The pipeline builds Hugo’s static files, uploads them to **Amazon S3**, and serves them globally through **CloudFront** with SSL certificates managed by **AWS Certificate Manager (ACM)**. Finally, **Cloudflare** is used to map a custom subdomain to the CloudFront distribution, ensuring global accessibility and security via DNS and SSL integration.
+This article walks through the automation of a **Hugo CI/CD pipeline** using **Terraform** to provision cloud resources
+and **GitHub Actions** to handle continuous integration and delivery. The pipeline builds Hugo’s static files, uploads
+them to **Amazon S3**, and serves them globally through **CloudFront** with SSL certificates managed by **AWS
+Certificate Manager (ACM)**. Finally, **Cloudflare** is used to map a custom subdomain to the CloudFront distribution,
+ensuring global accessibility and security via DNS and SSL integration.
 
-By the end of this guide, you’ll understand how each Terraform module - **storage**, **network**, **security**, and **cloudflare** - fits together to form a complete infrastructure-as-code solution. You’ll see how to securely connect GitHub Actions to AWS using **OpenID Connect (OIDC)**, and how the modular Terraform approach keeps the setup scalable, maintainable, and reusable across projects.
+By the end of this guide, you’ll understand how each Terraform module - **storage**, **network**, **security**, and
+**cloudflare** - fits together to form a complete infrastructure-as-code solution. You’ll see how to securely connect
+GitHub Actions to AWS using **OpenID Connect (OIDC)**, and how the modular Terraform approach keeps the setup scalable,
+maintainable, and reusable across projects.
 
 ## **Project Structure and Module Overview**
 
 ![Terraform AWS CI/CD Project Structure](images/terraform-aws-hugo-cicd-level-2.png)
 
-Before diving into the implementation, it’s important to understand how the Terraform configuration is organized. The project follows a modular design, where each core component of the infrastructure - storage, networking, security, and DNS - is defined as an independent Terraform module. This structure improves readability, reusability, and scalability, allowing you to make updates to one part of the infrastructure without affecting the others.
+Before diving into the implementation, it’s important to understand how the Terraform configuration is organized. The
+project follows a modular design, where each core component of the infrastructure - storage, networking, security, and
+DNS - is defined as an independent Terraform module. This structure improves readability, reusability, and scalability,
+allowing you to make updates to one part of the infrastructure without affecting the others.
 
-At the heart of the setup is the **`main.tf`** file, which serves as the orchestrator for all the modules. It defines how these modules interact, passing outputs from one module as inputs to another. For instance, the **storage** module creates the S3 bucket that hosts the Hugo-generated static files, and the **network** module consumes its details to configure a CloudFront distribution for global delivery. Similarly, the **security** module defines the IAM roles and OIDC permissions needed for GitHub Actions to deploy securely to AWS, while the **cloudflare** module manages DNS and SSL integration for the public-facing domain.
+At the heart of the setup is the **`main.tf`** file, which serves as the orchestrator for all the modules. It defines
+how these modules interact, passing outputs from one module as inputs to another. For instance, the **storage** module
+creates the S3 bucket that hosts the Hugo-generated static files, and the **network** module consumes its details to
+configure a CloudFront distribution for global delivery. Similarly, the **security** module defines the IAM roles and
+OIDC permissions needed for GitHub Actions to deploy securely to AWS, while the **cloudflare** module manages DNS and
+SSL integration for the public-facing domain.
 
 Each module encapsulates a specific function:
 
 - **Storage Module:** Handles S3 bucket creation and access configuration for static site hosting.
 - **Network Module:** Sets up CloudFront for content delivery and configures SSL certificates via AWS ACM.
 - **Security Module:** Manages IAM roles, policies, and OIDC trust relationships for secure GitHub Actions deployments.
-- **Cloudflare Module:** Connects Cloudflare DNS records to the CloudFront distribution and manages domain SSL validation.
+- **Cloudflare Module:** Connects Cloudflare DNS records to the CloudFront distribution and manages domain SSL
+  validation.
 
-This modular approach keeps the Terraform configuration clean, easier to maintain, and ideal for CI/CD workflows where each component can evolve independently. In the next sections, we’ll explore each module in detail and examine how they integrate to form a fully automated deployment pipeline for a Hugo website.
+This modular approach keeps the Terraform configuration clean, easier to maintain, and ideal for CI/CD workflows where
+each component can evolve independently. In the next sections, we’ll explore each module in detail and examine how they
+integrate to form a fully automated deployment pipeline for a Hugo website.
 
 ## **Configuring AWS for Secure GitHub Actions Access (Terraform Setup)**
 
-Before automating deployments with GitHub Actions, we first need to create the AWS resources that will **enable secure authentication** and **object storage** for our Hugo site. This foundation ensures that GitHub can deploy to AWS **without static access keys**, using **OpenID Connect (OIDC)** instead.
+Before automating deployments with GitHub Actions, we first need to create the AWS resources that will **enable secure
+authentication** and **object storage** for our Hugo site. This foundation ensures that GitHub can deploy to AWS
+**without static access keys**, using **OpenID Connect (OIDC)** instead.
 
-The Terraform configuration below lives in the **`security`** and **`storage`** modules, forming the security and storage backbone of the CI/CD pipeline.
+The Terraform configuration below lives in the **`security`** and **`storage`** modules, forming the security and
+storage backbone of the CI/CD pipeline.
 
 ### **Establishing OIDC Trust Between GitHub and AWS**
 
-We start by defining an **OpenID Connect (OIDC) provider** in AWS that recognizes GitHub as a trusted identity source. This allows GitHub Actions workflows to assume roles in AWS using temporary tokens rather than permanent credentials.
+We start by defining an **OpenID Connect (OIDC) provider** in AWS that recognizes GitHub as a trusted identity source.
+This allows GitHub Actions workflows to assume roles in AWS using temporary tokens rather than permanent credentials.
 
 **variables.tf (security module):**
 
@@ -95,11 +120,13 @@ resource "aws_iam_openid_connect_provider" "github" {
 }
 ```
 
-This resource registers GitHub’s identity provider (`token.actions.githubusercontent.com`) with AWS. The `thumbprint_list` ensures the TLS certificate used by GitHub is valid and trusted.
+This resource registers GitHub’s identity provider (`token.actions.githubusercontent.com`) with AWS. The
+`thumbprint_list` ensures the TLS certificate used by GitHub is valid and trusted.
 
 ### **Creating the IAM Role for GitHub Actions**
 
-Next, we define an **IAM role** that GitHub Actions will assume during deployment. The trust policy allows GitHub’s OIDC provider to assume the role, but only for a specific organization and repository.
+Next, we define an **IAM role** that GitHub Actions will assume during deployment. The trust policy allows GitHub’s OIDC
+provider to assume the role, but only for a specific organization and repository.
 
 ```hcl
 resource "aws_iam_role" "github_actions" {
@@ -130,7 +157,8 @@ resource "aws_iam_role" "github_actions" {
 }
 ```
 
-This configuration limits access to a specific repository, enforcing the **principle of least privilege**. Only workflows running in that repository can assume this role via OIDC.
+This configuration limits access to a specific repository, enforcing the **principle of least privilege**. Only
+workflows running in that repository can assume this role via OIDC.
 
 **outputs.tf:**
 
@@ -282,7 +310,8 @@ resource "aws_iam_role_policy" "github_actions" {
 }
 ```
 
-This IAM policy ensures that the GitHub workflow can safely interact with the S3 bucket — uploading the Hugo build output during deployment.
+This IAM policy ensures that the GitHub workflow can safely interact with the S3 bucket — uploading the Hugo build
+output during deployment.
 
 ### **3.5. Connecting the Terraform Outputs to GitHub Actions**
 
@@ -302,7 +331,8 @@ These secrets will allow GitHub Actions to assume the IAM role via OIDC and depl
 
 ## **GitHub Actions Workflow: Building and Deploying the Hugo Site**
 
-With the AWS side configured, we can now implement the **GitHub Actions workflow**. This workflow uses the IAM role and S3 bucket created by Terraform to automatically build and deploy the Hugo site.
+With the AWS side configured, we can now implement the **GitHub Actions workflow**. This workflow uses the IAM role and
+S3 bucket created by Terraform to automatically build and deploy the Hugo site.
 
 The workflow file (`.github/workflows/build-hugo-site.yml`) performs the following tasks:
 
@@ -384,11 +414,12 @@ jobs:
 
 The workflow resides in `.github/workflows/build-hugo-site.yml` and performs these primary functions:
 
-1. **Triggering Conditions**
-   The workflow runs on a push to the `dev` branch. This allows developers to test and validate changes in a development environment before they are promoted to production.
+1. **Triggering Conditions** The workflow runs on a push to the `dev` branch. This allows developers to test and
+   validate changes in a development environment before they are promoted to production.
 
-2. **Permissions Configuration**
-   Permissions are configured to allow GitHub Actions to generate an **OIDC token** (`id-token: write`) and access repository contents (`contents: read`). The OIDC token is crucial because it enables secure, short-lived authentication with AWS — eliminating the need for static credentials.
+2. **Permissions Configuration** Permissions are configured to allow GitHub Actions to generate an **OIDC token**
+   (`id-token: write`) and access repository contents (`contents: read`). The OIDC token is crucial because it enables
+   secure, short-lived authentication with AWS — eliminating the need for static credentials.
 
 ### **Job: Build**
 
@@ -404,7 +435,8 @@ The `build` job runs on an Ubuntu-based GitHub Actions runner (`ubuntu-latest`) 
     fetch-depth: 0
 ```
 
-This step retrieves the source code from the repository, including any submodules (such as Hugo themes), ensuring the full codebase is available for the build.
+This step retrieves the source code from the repository, including any submodules (such as Hugo themes), ensuring the
+full codebase is available for the build.
 
 #### **Setup Hugo**
 
@@ -416,7 +448,8 @@ This step retrieves the source code from the repository, including any submodule
     extended: true
 ```
 
-Here we install the specific Hugo version required for the build. Using a defined version guarantees consistency between local and CI builds.
+Here we install the specific Hugo version required for the build. Using a defined version guarantees consistency between
+local and CI builds.
 
 #### **Build and Optimize Site**
 
@@ -425,7 +458,8 @@ Here we install the specific Hugo version required for the build. Using a define
   run: hugo --gc --minify
 ```
 
-This command generates the static site files in the `public/` directory, removing unused assets (`--gc`) and minifying the output (`--minify`) for optimal performance.
+This command generates the static site files in the `public/` directory, removing unused assets (`--gc`) and minifying
+the output (`--minify`) for optimal performance.
 
 #### **Debugging Build Output**
 
@@ -437,7 +471,8 @@ This command generates the static site files in the `public/` directory, removin
     ...
 ```
 
-A diagnostic step to inspect the build output before deployment. This helps identify missing or misconfigured assets early in the pipeline.
+A diagnostic step to inspect the build output before deployment. This helps identify missing or misconfigured assets
+early in the pipeline.
 
 #### **Configure AWS Credentials via OIDC**
 
@@ -449,7 +484,8 @@ A diagnostic step to inspect the build output before deployment. This helps iden
     role-to-assume: ${{ secrets.IAM_ROLE_ARN }}
 ```
 
-This step allows GitHub Actions to assume an AWS IAM role securely via **OpenID Connect (OIDC)**. Unlike static AWS keys, OIDC tokens are short-lived and automatically managed, improving security posture.
+This step allows GitHub Actions to assume an AWS IAM role securely via **OpenID Connect (OIDC)**. Unlike static AWS
+keys, OIDC tokens are short-lived and automatically managed, improving security posture.
 
 #### **Verify AWS Connection**
 
@@ -467,7 +503,8 @@ This command confirms successful authentication with AWS and verifies which IAM 
   run: aws s3 sync ./public s3://${{ secrets.S3_BUCKET }} --delete
 ```
 
-Uploads all generated files from the `public/` directory to the specified S3 bucket. The `--delete` flag ensures the bucket mirrors the latest build exactly by removing outdated files.
+Uploads all generated files from the `public/` directory to the specified S3 bucket. The `--delete` flag ensures the
+bucket mirrors the latest build exactly by removing outdated files.
 
 #### **CloudFront Cache Invalidation**
 
@@ -487,17 +524,23 @@ This workflow forms the **foundation** of the CI/CD pipeline. It ensures that:
 
 - Hugo site builds can be automated and verified directly in GitHub.
 - Secure OIDC-based authentication with AWS is already in place.
-- The deployment process (S3 upload + CloudFront invalidation) is tested and working before Terraform provisions or manages any infrastructure.
+- The deployment process (S3 upload + CloudFront invalidation) is tested and working before Terraform provisions or
+  manages any infrastructure.
 
 ## **Setting Up the Network Module: CloudFront Distribution and SSL Certificate**
 
-With the static Hugo site now securely stored in **Amazon S3**, the next step is to distribute it globally and serve it over HTTPS. We achieve this using **Amazon CloudFront** — AWS’s Content Delivery Network (CDN) — and **AWS Certificate Manager (ACM)** for SSL/TLS certificates.
+With the static Hugo site now securely stored in **Amazon S3**, the next step is to distribute it globally and serve it
+over HTTPS. We achieve this using **Amazon CloudFront** — AWS’s Content Delivery Network (CDN) — and **AWS Certificate
+Manager (ACM)** for SSL/TLS certificates.
 
-This section focuses on defining the **network module** in Terraform, which provisions the CloudFront distribution, origin access control (OAC), a function for clean URLs, and the SSL certificate required for HTTPS.
+This section focuses on defining the **network module** in Terraform, which provisions the CloudFront distribution,
+origin access control (OAC), a function for clean URLs, and the SSL certificate required for HTTPS.
 
 ### **CloudFront Origin Access Control (OAC)**
 
-The first resource in this module is the **Origin Access Control (OAC)**, which replaces the older OAI mechanism. It ensures CloudFront can securely fetch files from the S3 bucket using signed requests, while preventing direct public access.
+The first resource in this module is the **Origin Access Control (OAC)**, which replaces the older OAI mechanism. It
+ensures CloudFront can securely fetch files from the S3 bucket using signed requests, while preventing direct public
+access.
 
 **variables.tf (network module):**
 
@@ -537,7 +580,8 @@ resource "aws_cloudfront_origin_access_control" "hugo_site" {
 
 ### **CloudFront Function for Clean URLs**
 
-Next, we define a **CloudFront Function** to handle “clean URLs.” Since Hugo generates content as `index.html` within folders, this function rewrites incoming requests to point to the correct file.
+Next, we define a **CloudFront Function** to handle “clean URLs.” Since Hugo generates content as `index.html` within
+folders, this function rewrites incoming requests to point to the correct file.
 
 **main.tf (network module):**
 
@@ -565,13 +609,15 @@ EOT
 }
 ```
 
-This allows users to access `/about/` instead of `/about/index.html`, providing a cleaner and more professional URL structure.
+This allows users to access `/about/` instead of `/about/index.html`, providing a cleaner and more professional URL
+structure.
 
 ![Hugo CloudFront Function](images/terraform-aws-hugo-ci-cd-cloudfront-functions.png)
 
 ### **CloudFront Distribution Configuration**
 
-The **CloudFront distribution** connects the CDN to the S3 origin, enforces HTTPS, enables caching, and associates the custom subdomain.
+The **CloudFront distribution** connects the CDN to the S3 origin, enforces HTTPS, enables caching, and associates the
+custom subdomain.
 
 **main.tf (network module):**
 
@@ -646,13 +692,15 @@ resource "aws_cloudfront_distribution" "hugo_site" {
 }
 ```
 
-This configuration enforces HTTPS, compresses content for faster delivery, and integrates directly with ACM for secure SSL termination.
+This configuration enforces HTTPS, compresses content for faster delivery, and integrates directly with ACM for secure
+SSL termination.
 
 ![Hugo CloudFront Distribution](images/terraform-aws-hugo-ci-cd-cloudfront-distribution.png)
 
 ### **SSL Certificate with AWS Certificate Manager (ACM)**
 
-Before CloudFront can serve HTTPS traffic, a valid certificate must be provisioned. We use **AWS Certificate Manager (ACM)** for this, specifying DNS validation for automatic verification.
+Before CloudFront can serve HTTPS traffic, a valid certificate must be provisioned. We use **AWS Certificate Manager
+(ACM)** for this, specifying DNS validation for automatic verification.
 
 **main.tf (network module):**
 
@@ -682,7 +730,8 @@ resource "aws_acm_certificate" "hugo_site" {
 
 ### **Network Module Outputs**
 
-Once the resources are deployed, several key outputs from the **network module** are required by other Terraform modules — including Cloudflare for DNS and validation setup.
+Once the resources are deployed, several key outputs from the **network module** are required by other Terraform modules
+— including Cloudflare for DNS and validation setup.
 
 **outputs.tf (network module):**
 
@@ -714,17 +763,23 @@ output "acm_validation_options" {
 }
 ```
 
-These outputs provide critical data that downstream modules—like **Cloudflare**—will consume to finalize DNS setup and SSL validation. The **`acm_validation_options`** in particular are used to automatically create DNS records for certificate validation.
+These outputs provide critical data that downstream modules—like **Cloudflare**—will consume to finalize DNS setup and
+SSL validation. The **`acm_validation_options`** in particular are used to automatically create DNS records for
+certificate validation.
 
 ## **Configuring Cloudflare: DNS, SSL Validation, and Subdomain Binding**
 
-With the CloudFront distribution and SSL certificate in place, the final step is to make the site accessible through your custom domain. We’ll use **Cloudflare** to manage DNS records, handle ACM certificate validation, and securely bind the subdomain to the CloudFront URL.
+With the CloudFront distribution and SSL certificate in place, the final step is to make the site accessible through
+your custom domain. We’ll use **Cloudflare** to manage DNS records, handle ACM certificate validation, and securely bind
+the subdomain to the CloudFront URL.
 
-This configuration allows Cloudflare to act as a DNS and security layer—enabling global caching, DDoS protection, and HTTPS enforcement on top of AWS CloudFront.
+This configuration allows Cloudflare to act as a DNS and security layer—enabling global caching, DDoS protection, and
+HTTPS enforcement on top of AWS CloudFront.
 
 ### **Fetching Zone Information**
 
-Before adding any DNS records, Terraform must retrieve details about your Cloudflare-managed domain. The following data block fetches the zone ID based on the domain name provided as a variable (`var.domain_name`):
+Before adding any DNS records, Terraform must retrieve details about your Cloudflare-managed domain. The following data
+block fetches the zone ID based on the domain name provided as a variable (`var.domain_name`):
 
 **variables.tf (cloduflare module):**
 
@@ -774,7 +829,8 @@ data "cloudflare_zones" "zone" {
 }
 ```
 
-Once the zone information is available, a secondary data source lists all existing DNS records in that zone. This is useful when validating or filtering existing records to avoid conflicts.
+Once the zone information is available, a secondary data source lists all existing DNS records in that zone. This is
+useful when validating or filtering existing records to avoid conflicts.
 
 **main.tf (cloudflare module):**
 
@@ -786,8 +842,9 @@ data "cloudflare_dns_records" "all" {
 
 ### **Automating ACM Certificate Validation**
 
-When AWS Certificate Manager issues an SSL certificate for CloudFront, it requires DNS-based validation.
-To automate this process, Terraform dynamically creates the necessary DNS records in Cloudflare using the outputs from the **network module** (`acm_validation_options`).
+When AWS Certificate Manager issues an SSL certificate for CloudFront, it requires DNS-based validation. To automate
+this process, Terraform dynamically creates the necessary DNS records in Cloudflare using the outputs from the **network
+module** (`acm_validation_options`).
 
 **main.tf (cloudflare module):**
 
@@ -808,13 +865,14 @@ resource "cloudflare_dns_record" "acm_validation" {
 }
 ```
 
-Each record generated by this block corresponds to a validation entry required by ACM.
-Once these DNS records propagate, ACM automatically verifies domain ownership and issues the SSL certificate used by CloudFront.
+Each record generated by this block corresponds to a validation entry required by ACM. Once these DNS records propagate,
+ACM automatically verifies domain ownership and issues the SSL certificate used by CloudFront.
 
 ### **Binding the Subdomain to CloudFront**
 
-After the SSL certificate is validated, we can now point the subdomain (e.g., `blog.example.com`) to the CloudFront distribution.
-The record below creates a **CNAME** entry in Cloudflare that maps the subdomain to CloudFront’s domain name, enabling public access to the static site.
+After the SSL certificate is validated, we can now point the subdomain (e.g., `blog.example.com`) to the CloudFront
+distribution. The record below creates a **CNAME** entry in Cloudflare that maps the subdomain to CloudFront’s domain
+name, enabling public access to the static site.
 
 **main.tf (cloudflare module):**
 
@@ -837,7 +895,8 @@ Here’s what’s happening:
 
 - **`type = "CNAME"`**: Points your subdomain to the CloudFront distribution.
 - **`proxied = true`**: Routes traffic through Cloudflare, enabling SSL, caching, and security features.
-- **`depends_on`** ensures the DNS validation records are created first, allowing ACM verification to complete before exposing the public domain.
+- **`depends_on`** ensures the DNS validation records are created first, allowing ACM verification to complete before
+  exposing the public domain.
 
 ## **Completing the CI/CD Pipeline**
 
@@ -847,4 +906,5 @@ At this point, your **Hugo static website** is:
 - Distributed globally through **AWS CloudFront** with an ACM-managed SSL certificate.
 - Connected to a **custom subdomain** via **Cloudflare**, ensuring secure and performant access.
 
-This final step completes the end-to-end automation of your CI/CD pipeline—combining Terraform’s Infrastructure as Code, GitHub Actions’ automation, and the scalability of AWS and Cloudflare.
+This final step completes the end-to-end automation of your CI/CD pipeline—combining Terraform’s Infrastructure as Code,
+GitHub Actions’ automation, and the scalability of AWS and Cloudflare.
