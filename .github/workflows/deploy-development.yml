@@ -2,7 +2,7 @@ name: Build and deploy the development cloud journal webiste using Hugo
 on:
   push:
     branches:
-      - dev
+      - production
   workflow_dispatch:
 jobs:
   build-development-webiste:
