@@ -1,7 +1,7 @@
 [en]
 label = "English"
-title = "Eric Ngigi's Blog"
+title = "Eric Ngigi — Platform, Pipelines & Production"
 weight = 1
 
 [en.params.sidebar]
-subtitle = "Hi, I'm Eric, a Software Engineer focused on Cloud and Linux DevSecOps. I specialize in building secure, automated infrastructure and system designs."
+subtitle = "Hi! I'm Eric, a DevOps and Software Engineer. I use this space to share infrastructure tools, production notes, and real-world automation setups I build in the open."

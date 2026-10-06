@@ -1,0 +1,3 @@
+{{ $params := merge (dict "taxonomy" "categories" "title" (T "widget.categoriesCloud.title") "icon" "category-plus")
+.Params }} {{ partial "widget/taxonomy" (dict "Context" .Context "Params" $params) }}
+
