@@ -64,7 +64,12 @@ warning = "⚠️"
 caution = "🚨"
 
 [widgets]
-homepage = [{ type = "search" }]
+homepage = [
+  { type = "search" },
+  { type = "archives" },
+  { type = "categories" },
+  # { type = "tag-cloud" },
+]
 page = [{ type = "toc" }]
 
 [opengraph.twitter]
