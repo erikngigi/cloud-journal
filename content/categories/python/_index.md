@@ -1,4 +1,4 @@
 ---
-title: 'Python'
-icon: 'fontawesome7/brand-python'
+title: "Python"
+icon: "fontawesome7/brands/python"
 ---
