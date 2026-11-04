@@ -1,7 +1,7 @@
 baseURL = "https://www.ericngigi.com"
 locale = "en-us"
 title = "Hugo Theme Stack"
-theme = "stack-dev"
+theme = "stack-theme-production"
 # Theme i18n support
 # See i18n folder for available languages
 defaultContentLanguage = "en"

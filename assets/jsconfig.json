@@ -2,7 +2,7 @@
  "compilerOptions": {
   "paths": {
    "*": [
-    "../themes/stack-dev/assets/*"
+    "../themes/stack-theme-production/assets/*"
    ]
   }
  }

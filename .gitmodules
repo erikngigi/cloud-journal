@@ -1,0 +1,4 @@
+[submodule "themes/stack-theme-production"]
+	path = themes/stack-theme-production
+	url = https://github.com/erikngigi/hugo-stack-theme.git
+	branch = master
