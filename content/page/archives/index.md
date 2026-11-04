@@ -7,5 +7,5 @@ menu:
   main:
     weight: 3
     params:
-      icon: file-zip
+      icon: tabler/outline/file-zip
 ---

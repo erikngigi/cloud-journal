@@ -1,7 +1,7 @@
 [en]
 label = "English"
-title = "Eric Ngigi — Platform, Pipelines & Production"
+title = "Eric Ngigi | Cloud & AI Engineer"
 weight = 1
 
 [en.params.sidebar]
-subtitle = "Hi! I'm Eric, a DevOps and Software Engineer. I use this space to share infrastructure tools, production notes, and real-world automation setups I build in the open."
+subtitle = "Cloud engineer building cost-aware infrastructure and practical AI automation for small businesses."
