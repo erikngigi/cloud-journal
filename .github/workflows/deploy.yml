@@ -1,0 +1,52 @@
+name: Build and deploy Hugo site
+on:
+  push:
+    branches: [development, production]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }} # "development" or "production"
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: ${{ vars.HUGO_VERSION }}
+          extended: true
+
+      - name: Build minified pages
+        run: hugo --gc --minify --baseURL "${{ vars.SITE_URL }}"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.IAM_ROLE_ARN }}
+          role-session-name: GithubActions-HugoDeploy-${{ github.ref_name }}
+
+      - name: Sync public directory with S3
+        run: aws s3 sync ./public s3://${{ secrets.HUGO_S3_BUCKET }} --delete
+
+      - name: Create CloudFront invalidation
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.HUGO_CLOUDFRONT_ID }} \
+            --paths "/*"
+        continue-on-error: true
+
+      - name: Build summary
+        run: echo "### Deployed ${{ github.ref_name }} :rocket:" >> $GITHUB_STEP_SUMMARY
