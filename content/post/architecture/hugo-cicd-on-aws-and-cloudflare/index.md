@@ -1,19 +1,20 @@
 ---
-title: 'CI/CD for Hugo: AWS, GitHub Actions & Cloudflare via Terraform'
-description: 'Build a secure, automated pipeline for Hugo using GitHub Actions, Terraform, AWS, and Cloudflare.'
-date: '2025-10-13'
-image: 'images/terraform-aws-03.webp'
+title: "Hugo CI/CD on AWS and Cloudflare: A Terraform Case Study"
+description: "How I designed a Terraform-managed Hugo pipeline on AWS and Cloudflare for $0/month, deploying in 2 minutes. Design choices, costs and failure modes."
+date: "2025-10-13"
+image: "images/terraform-aws-03.webp"
 draft: false
 
 categories:
-  - 'aws'
-  - 'ci-cd'
-  - 'terraform'
+  - "ansible"
+  - "architecture"
+  - "devops"
+  - "terraform"
 
 toc: true
 readingTime: true
 math: false
-license: ''
+license: ""
 hidden: false
 comments: true
 ---
@@ -363,7 +364,7 @@ jobs:
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
         with:
-          hugo-version: '0.150.0'
+          hugo-version: "0.150.0"
           extended: true
       - name: Build minified pages
         run: hugo --gc --minify
@@ -444,7 +445,7 @@ full codebase is available for the build.
 - name: Setup Hugo
   uses: peaceiris/actions-hugo@v2
   with:
-    hugo-version: '0.150.0'
+    hugo-version: "0.150.0"
     extended: true
 ```
 
@@ -908,3 +909,25 @@ At this point, your **Hugo static website** is:
 
 This final step completes the end-to-end automation of your CI/CD pipeline—combining Terraform’s Infrastructure as Code,
 GitHub Actions’ automation, and the scalability of AWS and Cloudflare.
+
+## The Core Philosophy
+
+High-level introduction to the design pattern or infrastructure choice.
+
+---
+
+## Why Avoid [Platform / Bloatware]?
+
+Explain the trade-offs, performance costs, or vendor lock-in concerns.
+
+---
+
+## Proposed System Blueprint
+
+Detailed explanation of how self-hosted IaC or minimal tools provide a superior alternative.
+
+---
+
+## Trade-offs & Considerations
+
+Be candid about maintenance overhead vs. control.

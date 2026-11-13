@@ -1,19 +1,21 @@
 ---
-title: "Automating Terraform Workspace"
-description: "Shell Script that automates working with Terraform on Linux."
+title: "Bash Scaffolding for Module-Based Teraform Workspaces"
+description: "I wrote a Bash Script that scaffolds single-environment Terraform workspaces built around modules, cutting setup to 90 seconds. Design choices and limits."
 date: "2024-08-20"
-image: "images/bash-scripting-01.jpg"
-draft: false
+image: "images/cover.webp"
+draft: true
 
 categories:
+  - "python"
   - "bash"
-  - "terraform"
+  - "automation"
 
-toc: true
+toc: false
+readingTime: true
 math: false
 license: ""
 hidden: false
-comments: false
+comments: true
 ---
 
 ## How does the Automation Shell Script simplify starting a Terraform project?

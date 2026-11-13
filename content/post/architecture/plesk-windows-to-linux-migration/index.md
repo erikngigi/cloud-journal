@@ -1,7 +1,7 @@
 ---
-title: 'Metatrader 5 Architecture on Ubuntu'
-description: ""
-date: "2026-10-14T14:54:32+03:00"
+title: "Plesk Windows to Linux Migration: 28% Cheaper, 35% Faster"
+description: "How I migrated a multi-site Plesk hosting environment from Windows to Linux, cutting cost by 28% and improving page load times by 35%. Steps, pitfalls, and results."
+date: "2026-11-05T17:55:25+03:00"
 image: "images/cover.webp"
 draft: true
 

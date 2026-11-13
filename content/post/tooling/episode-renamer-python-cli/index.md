@@ -1,7 +1,7 @@
 ---
-title: 'Python Tv Metadata Renamer'
-description: ""
-date: "2026-10-14T14:55:16+03:00"
+title: "Python CLI for Renaming TV and Anime Episodes via APIs"
+description: "I built a Python CLI that pulls episode data from Jikan, TVMaze, and Tenrai and renames local files through an interactive prompt. Design choices and limits."
+date: "2026-11-05T18:52:37+03:00"
 image: "images/cover.webp"
 draft: true
 
