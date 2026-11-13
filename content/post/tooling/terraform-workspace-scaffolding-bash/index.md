@@ -3,7 +3,7 @@ title: "Bash Scaffolding for Module-Based Teraform Workspaces"
 description: "I wrote a Bash Script that scaffolds single-environment Terraform workspaces built around modules, cutting setup to 90 seconds. Design choices and limits."
 date: "2024-08-20"
 image: "images/cover.webp"
-draft: true
+draft: false
 
 categories:
   - "python"
